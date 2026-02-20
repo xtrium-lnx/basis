@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+ 
+  <ItemDefinitionGroup>
+    <SlangCompileTask>
+      <EnableDebugFlag>false</EnableDebugFlag>
+      <SpirvProfile>spirv_1_6</SpirvProfile>
+      <OutputFolder Condition="'%(SlangCompileTask.OutputFolder)' == ''">$(SolutionDir)bin</OutputFolder>
+      <OutputFilename Condition="'%(SlangCompileTask.OutputFilename)' == ''">%(SlangCompileTask.OutputFolder)\%(Identity).spv</OutputFilename>
+      <Entrypoints></Entrypoints>
+      <AdditionalOptions></AdditionalOptions>
+
+      <CommandLineTemplate>$(VULKAN_SDK)\Bin\slangc.exe %(FullPath) -target spirv -emit-spirv-directly -fvk-use-entrypoint-name [AllOptions] [AdditionalOptions]</CommandLineTemplate>
+    </SlangCompileTask>
+  </ItemDefinitionGroup> 
+</Project>
