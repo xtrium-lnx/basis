@@ -1,0 +1,3 @@
+[submodule "external/include/ts"]
+	path = external/include/ts
+	url = git@github.com:xtrium-lnx/ts.git
