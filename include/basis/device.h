@@ -83,7 +83,7 @@ namespace basis
 		void WaitForCompletion(vk::raii::CommandBuffer* cb);
 		void WaitForIdle();
 
-		void Defer(std::move_only_function<void()>&& action);
+		void Defer(std::move_only_function<void()> action);
 		void FlushDeferred();
 
 		std::tuple<Image&, vk::Semaphore, vk::Semaphore> AcquireNextFrame();

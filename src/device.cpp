@@ -465,7 +465,7 @@ void Device::WaitForIdle()
 	m_device.waitIdle();
 }
 
-void Device::Defer(std::move_only_function<void()>&& action)
+void Device::Defer(std::move_only_function<void()> action)
 {
 	m_frameData[m_currentFrame].deferredActions.push_back(std::move(action));
 }
