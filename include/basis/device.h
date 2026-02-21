@@ -48,14 +48,6 @@ namespace basis
 		size_t                              m_currentFrame      = 0;
 		uint32_t                            m_currentImageIndex = 0;
 
-		vk::raii::Instance       m_InitInstance();
-		vk::raii::PhysicalDevice m_PickPhysicalDevice();
-		uint32_t                 m_PickQueueFamily(vk::QueueFlags requestedQueueFlags);
-		vk::raii::SurfaceKHR     m_CreateGlfwWindowSurface(GLFWwindow* window);
-		vk::raii::Device         m_CreateDevice(uint32_t graphicsQueueFamily);
-		vk::raii::DescriptorPool m_CreateDescriptorPool();
-		std::pair<vk::raii::SwapchainKHR, std::vector<std::unique_ptr<Image>>> CreateSwapchain(GLFWwindow* window);
-
 		struct CommandBuffer
 		{
 			vk::raii::CommandBuffer commandBuffer = nullptr;
@@ -66,13 +58,22 @@ namespace basis
 		std::unordered_map<VkCommandBuffer, CommandBuffer> m_commandBuffers;
 		std::mutex                                         m_commandBufferMutex;
 
+		
+		vk::raii::Instance                                                     m_InitInstance();
+		vk::raii::PhysicalDevice                                               m_PickPhysicalDevice();
+		uint32_t                                                               m_PickQueueFamily(vk::QueueFlags requestedQueueFlags);
+		vk::raii::SurfaceKHR                                                   m_CreateGlfwWindowSurface(GLFWwindow* window);
+		vk::raii::Device                                                       m_CreateDevice(uint32_t graphicsQueueFamily);
+		vk::raii::DescriptorPool                                               m_CreateDescriptorPool();
+		std::pair<vk::raii::SwapchainKHR, std::vector<std::unique_ptr<Image>>> m_CreateSwapchain(GLFWwindow* window);
+
 	public:
 		explicit Device(const Window& window);
 		~Device();
 
-		const vk::raii::Device&         GetDevice() const;
-		const VmaAllocator&             GetAllocator() const;
-		uint32_t                        GetMainQueueFamily() const;
+		const vk::raii::Device& GetDevice() const;
+		const VmaAllocator& GetAllocator() const;
+		uint32_t GetMainQueueFamily() const;
 		const vk::raii::DescriptorPool& GetDescriptorPool() const;
 
 		vk::raii::CommandBuffer* AcquireCommandBuffer();

@@ -203,7 +203,7 @@ vk::raii::DescriptorPool Device::m_CreateDescriptorPool()
  * The GLFWwindow is passed to retrieve the framebuffer's size.
  * Relaxed FIFO presentation mode is preferred, but if unavailable, we fall back to plain FIFO which is available everywhere.
  */
-std::pair<vk::raii::SwapchainKHR, std::vector<std::unique_ptr<Image>>> Device::CreateSwapchain(GLFWwindow* window)
+std::pair<vk::raii::SwapchainKHR, std::vector<std::unique_ptr<Image>>> Device::m_CreateSwapchain(GLFWwindow* window)
 {
 	auto surfaceCaps           = m_physicalDevice.getSurfaceCapabilitiesKHR(m_surface);
 	auto availableFormats      = m_physicalDevice.getSurfaceFormatsKHR(m_surface);
@@ -285,7 +285,7 @@ Device::Device(const Window& window)
 	m_surface         = m_CreateGlfwWindowSurface(window.NativeHandle());
 	m_device          = m_CreateDevice(m_mainQueueFamily);
 	m_mainQueue       = vk::raii::Queue(m_device, m_mainQueueFamily, 0); // Fetches a queue from the device (the only one it has in this case)
-	std::tie(m_swapchain, m_swapchainImages) = CreateSwapchain(window.NativeHandle());
+	std::tie(m_swapchain, m_swapchainImages) = m_CreateSwapchain(window.NativeHandle());
 
 	auto poolInfo = vk::CommandPoolCreateInfo {
 		.flags            = vk::CommandPoolCreateFlagBits::eResetCommandBuffer,

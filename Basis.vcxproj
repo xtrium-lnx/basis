@@ -160,6 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\basicrenderer.cpp" />
     <ClCompile Include="src\buffer.cpp" />
     <ClCompile Include="src\graphicspipeline.cpp" />
     <ClCompile Include="src\helpers.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\basis\basicrenderer.h" />
     <ClInclude Include="include\basis\buffer.h" />
     <ClInclude Include="include\basis\cache.h" />
     <ClInclude Include="include\basis\graphicspipeline.h" />
