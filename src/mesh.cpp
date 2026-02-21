@@ -1,5 +1,6 @@
 #include <basis/mesh.h>
 
+#include <basis/device.h>
 #include <basis/buffer.h>
 
 #define NOMINMAX
@@ -19,12 +20,17 @@
 
 using namespace basis;
 
+Mesh::Mesh(Device& device)
+    : owner(device)
+{
+}
+
 Mesh::~Mesh()
 {
-	for (auto& vb : vertexBuffers)
-		vb.reset();
+    for (auto& vb : vertexBuffers)
+        owner.Defer([buffer = std::move(vb)] {});
 
-	indexBuffer.reset();
+    owner.Defer([buffer = std::move(indexBuffer)] {});
 }
 
 void Mesh::Bind(const vk::raii::CommandBuffer& cb) const
@@ -128,7 +134,7 @@ std::vector<glm::vec3> s_ComputeTangents(
 
 std::unique_ptr<Mesh> Mesh::FromObj(Device& device, const std::string& data)
 {
-    auto result = std::make_unique<Mesh>();
+    auto result = std::make_unique<Mesh>(device);
     std::istringstream is(data);
 
     auto objData = rapidobj::ParseStream(is);

@@ -26,12 +26,14 @@ namespace basis
 
 		static constexpr size_t kMAX_BUFFERS = 4; // For now : position, normal, UV, tangents
 
+		Device&                                           owner;
 		std::array<std::unique_ptr<Buffer>, kMAX_BUFFERS> vertexBuffers = { nullptr };
 		std::unique_ptr<Buffer>                           indexBuffer   = nullptr;
 		uint32_t                                          indexCount    = 0;
 		std::vector<Primitive>                            primitives    = {};
 
-		Mesh() = default;
+		Mesh() = delete;
+		Mesh(Device& device);
 		~Mesh();
 
 		void Bind(const vk::raii::CommandBuffer& cb) const;

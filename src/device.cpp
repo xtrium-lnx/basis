@@ -465,10 +465,31 @@ void Device::WaitForIdle()
 	m_device.waitIdle();
 }
 
+void Device::Defer(std::move_only_function<void()>&& action)
+{
+	m_frameData[m_currentFrame].deferredActions.push_back(std::move(action));
+}
+
+void Device::FlushDeferred()
+{
+	for (auto& fd : m_frameData)
+	{
+		for (auto& a : fd.deferredActions)
+			a();
+
+		fd.deferredActions.clear();
+	}
+}
+
 std::tuple<Image&, vk::Semaphore, vk::Semaphore> Device::AcquireNextFrame()
 {
 	while (m_device.waitForFences({ m_frameData[m_currentFrame].inFlightFence }, true, UINT64_MAX) != vk::Result::eSuccess) {}
 	m_device.resetFences({ m_frameData[m_currentFrame].inFlightFence });
+
+	for (auto& action : m_frameData[m_currentFrame].deferredActions)
+		action();
+
+	m_frameData[m_currentFrame].deferredActions.clear();
 
 	vk::Result result;
 	std::tie(result, m_currentImageIndex) = m_swapchain.acquireNextImage(UINT64_MAX, m_frameData[m_currentFrame].presentCompleteSemaphore, nullptr);

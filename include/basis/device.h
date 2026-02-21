@@ -6,8 +6,10 @@
 #include <vulkan/vulkan_raii.hpp>
 #include <vma/vk_mem_alloc.h>
 
+#include <functional>
 #include <mutex>
 #include <unordered_map>
+#include <vector>
 
 struct GLFWwindow;
 
@@ -20,9 +22,11 @@ namespace basis
 	{		
 		struct FrameData
 		{
-			vk::raii::Semaphore     presentCompleteSemaphore    = nullptr;
-			vk::raii::Semaphore     renderFinishedSemaphore     = nullptr;
-			vk::raii::Fence         inFlightFence               = nullptr;
+			vk::raii::Semaphore                          presentCompleteSemaphore    = nullptr;
+			vk::raii::Semaphore                          renderFinishedSemaphore     = nullptr;
+			vk::raii::Fence                              inFlightFence               = nullptr;
+
+			std::vector<std::move_only_function<void()>> deferredActions;
 		};
 
 		vk::raii::Instance                  m_instance          = nullptr;
@@ -78,6 +82,9 @@ namespace basis
 		void SubmitAndWait(vk::raii::CommandBuffer* cb, const std::vector<vk::Semaphore>& waitOps = {});
 		void WaitForCompletion(vk::raii::CommandBuffer* cb);
 		void WaitForIdle();
+
+		void Defer(std::move_only_function<void()>&& action);
+		void FlushDeferred();
 
 		std::tuple<Image&, vk::Semaphore, vk::Semaphore> AcquireNextFrame();
 		void Present(const std::vector<vk::Semaphore>& waitOps);

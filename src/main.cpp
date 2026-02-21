@@ -265,6 +265,9 @@ int main(int argc, char** argv)
 		device->Submit(cb, { imageAvailable, cameraUploadComplete }, renderFinished);
 		device->ReleaseCommandBuffer(cb);
 
+		// if (t > 1.0f)
+		// 	scene.Kill(monkey);
+
 		device->Present({ renderFinished });
 
 		// BAD PRACTICE, ONLY HERE FOR DEMONSTRATION PURPOSES
@@ -282,6 +285,8 @@ int main(int argc, char** argv)
 	pipeline.reset();
 
 	vfs.reset();
+
+	device->FlushDeferred();
 	device.reset();
 	window.reset();
 	return 0;
