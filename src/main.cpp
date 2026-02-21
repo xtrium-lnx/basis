@@ -1,7 +1,6 @@
 #define TS_VFS_IMPLEMENTATION
-#include <ts/ts_vfs.h>
-
 #include <ts/ts_ecs.h>
+#include <ts/ts_vfs.h>
 
 //#define TS_VFS_ZIP_IMPLEMENTATION
 //#include <ts/ts_vfs_zip.h>
@@ -13,6 +12,7 @@
 #include <basis/graphicspipeline.h>
 #include <basis/buffer.h>
 #include <basis/mesh.h>
+#include <basis/cache.h>
 
 #include <memory>
 #include <print>
@@ -103,7 +103,7 @@ struct Transform
 
 struct MeshComponent
 {
-	std::unique_ptr<basis::Mesh> mesh;
+	basis::Mesh* mesh;
 };
 
 struct CameraComponent
@@ -132,19 +132,21 @@ int main(int argc, char** argv)
 	auto vfs    = std::make_unique<ts::Vfs>();
 
 	ts::Scene scene;
+	basis::Cache<basis::Mesh> meshes([&](std::string_view path) {
+		return vfs->Open(path)
+			.and_then([](ts::VfsFile f) { return f.ReadText(); })
+			.transform([&device](const std::string& text) { return basis::Mesh::FromObj(*device, text); })
+			.value();
+	});
+
 	auto monkey = scene.Spawn(
 		Transform {},
-		MeshComponent {
-			.mesh = vfs->Open("/meshes/suzanne.obj")
-				.and_then([](ts::VfsFile f) { return f.ReadText(); })
-				.transform([&device](const std::string& text) { return basis::Mesh::FromObj(*device, text); })
-				.value()
-		}
+		MeshComponent { .mesh = meshes.GetOrLoad("/meshes/suzanne.obj") }
 	);
 
 	auto camera = scene.Spawn(
-		Transform{},
-		CameraComponent{}
+		Transform {},
+		CameraComponent {}
 	);
 
 	auto pipeline = CreateBasicPipeline(*device, *vfs);
@@ -286,6 +288,7 @@ int main(int argc, char** argv)
 
 	vfs.reset();
 
+	meshes.ReleaseAll();
 	device->FlushDeferred();
 	device.reset();
 	window.reset();

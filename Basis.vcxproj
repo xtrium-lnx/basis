@@ -172,12 +172,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\basis\buffer.h" />
+    <ClInclude Include="include\basis\cache.h" />
     <ClInclude Include="include\basis\graphicspipeline.h" />
     <ClInclude Include="include\basis\helpers.h" />
     <ClInclude Include="include\basis\device.h" />
     <ClInclude Include="include\basis\image.h" />
     <ClInclude Include="include\basis\mesh.h" />
     <ClInclude Include="include\basis\shadermodule.h" />
+    <ClInclude Include="include\basis\string_hash.h" />
     <ClInclude Include="include\basis\window.h" />
     <ClInclude Include="include\ts\miniminiz.h" />
     <ClInclude Include="include\ts\ts_ecs.h" />

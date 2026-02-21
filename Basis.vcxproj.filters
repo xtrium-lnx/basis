@@ -88,6 +88,12 @@
     <ClInclude Include="include\ts\ts_ecs.h">
       <Filter>Header Files\ts</Filter>
     </ClInclude>
+    <ClInclude Include="include\basis\cache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\basis\string_hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <SlangCompileTask Include="shaders\basic.slang">
