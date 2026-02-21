@@ -8,15 +8,11 @@
 #include <basis/window.h>
 #include <basis/device.h>
 #include <basis/image.h>
-#include <basis/helpers.h>
-#include <basis/graphicspipeline.h>
-#include <basis/buffer.h>
 #include <basis/mesh.h>
 #include <basis/cache.h>
 #include <basis/basicrenderer.h>
 
 #include <memory>
-#include <print>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -94,11 +90,7 @@ int main(int argc, char** argv)
 		window->PollEvents();
 		auto [image, imageAvailable, renderFinished] = device->AcquireNextFrame();
 
-		scene.RequireComponent<Transform>(camera).position = glm::vec3(
-			6.0f * glm::cos(t),
-			2.0f,
-			6.0f * glm::sin(t)
-		);
+		scene.RequireComponent<Transform>(camera).position = glm::vec3(6.0f * glm::cos(t), 2.0f, 6.0f * glm::sin(t));
 		
 		scene.Query<Transform, CameraComponent>().Single([&](ts::Entity, Transform& transform, CameraComponent& camera) {
 			renderer->SetCamera(
