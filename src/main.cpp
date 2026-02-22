@@ -12,6 +12,7 @@
 #include <basis/cache.h>
 #include <basis/basicrenderer.h>
 
+#include <chrono>
 #include <memory>
 
 #include <glm/glm.hpp>
@@ -83,11 +84,17 @@ int main(int argc, char** argv)
 		CameraComponent {}
 	);
 
+	auto tPrev = std::chrono::high_resolution_clock::now();
 	float t = 0.0f;
 
 	do
 	{
 		window->PollEvents();
+		auto tNow = std::chrono::high_resolution_clock::now();
+		auto dt = std::chrono::duration<float>(tNow - tPrev);
+		tPrev = tNow;
+		t += dt.count();
+
 		auto [image, imageAvailable, renderFinished] = device->AcquireNextFrame();
 
 		scene.RequireComponent<Transform>(camera).position = glm::vec3(6.0f * glm::cos(t), 2.0f, 6.0f * glm::sin(t));
@@ -105,10 +112,6 @@ int main(int argc, char** argv)
 
 		renderer->Render(image, { imageAvailable }, renderFinished);
 		device->Present({ renderFinished });
-
-		// BAD PRACTICE, ONLY HERE FOR DEMONSTRATION PURPOSES
-		// Use delta-time from a clock (ie. std::chrono) instead.
-		t += 1.0f / 60.0f;
 	} while (!window->ShouldClose());
 
 	device->WaitForIdle();

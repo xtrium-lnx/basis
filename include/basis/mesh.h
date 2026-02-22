@@ -6,11 +6,12 @@
 #include <string>
 #include <vector>
 
+#include <basis/buffer.h>
+
 namespace vk::raii { class CommandBuffer; }
 
 namespace basis
 {
-	class Buffer;
 	class Device;
 
 	class Mesh

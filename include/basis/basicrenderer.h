@@ -6,6 +6,8 @@
 #define VULKAN_HPP_NO_STRUCT_CONSTRUCTORS
 #include <vulkan/vulkan_raii.hpp>
 
+#include <basis/graphicspipeline.h>
+
 namespace ts { class Vfs; }
 
 namespace basis
@@ -13,7 +15,6 @@ namespace basis
 	class Window;
 	class Device;
 	class Buffer;
-	class GraphicsPipeline;
 	class Image;
 	class Mesh;
 	
