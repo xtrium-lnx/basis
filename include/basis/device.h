@@ -24,7 +24,7 @@ namespace basis
 		{
 			vk::raii::Semaphore                          presentCompleteSemaphore    = nullptr;
 			vk::raii::Semaphore                          renderFinishedSemaphore     = nullptr;
-			vk::raii::Fence                              inFlightFence               = nullptr;
+			vk::raii::Fence*                             lastUsedFence               = nullptr;
 
 			std::vector<std::move_only_function<void()>> deferredActions;
 		};

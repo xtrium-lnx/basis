@@ -20,6 +20,8 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <basis/spline.h>
+
 struct Transform
 {
 	glm::vec3 position    = glm::vec3(0.0f);
@@ -87,6 +89,14 @@ int main(int argc, char** argv)
 	auto tPrev = std::chrono::high_resolution_clock::now();
 	float t = 0.0f;
 
+	basis::CatmullRomSpline<glm::vec3> spline {{
+		{ 0.0f, 0.0f, 0.0f },
+		{ 1.0f, 0.0f, 0.0f },
+		{ 0.0f, 1.0f, 0.0f },
+		{ 0.0f, 0.0f, 1.0f },
+		{ 1.0f, 1.0f, 1.0f }
+	}};
+
 	do
 	{
 		window->PollEvents();
@@ -98,6 +108,7 @@ int main(int argc, char** argv)
 		auto [image, imageAvailable, renderFinished] = device->AcquireNextFrame();
 
 		scene.RequireComponent<Transform>(camera).position = glm::vec3(6.0f * glm::cos(t), 2.0f, 6.0f * glm::sin(t));
+		scene.RequireComponent<Transform>(monkey).position = spline.At(glm::mod(t, 5.0f));
 		
 		scene.Query<Transform, CameraComponent>().Single([&](ts::Entity, Transform& transform, CameraComponent& camera) {
 			renderer->SetCamera(

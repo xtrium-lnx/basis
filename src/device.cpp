@@ -312,7 +312,7 @@ Device::Device(const Window& window)
 		return FrameData {
 			.presentCompleteSemaphore = vk::raii::Semaphore(m_device, vk::SemaphoreCreateInfo()),
 			.renderFinishedSemaphore  = vk::raii::Semaphore(m_device, vk::SemaphoreCreateInfo()),
-			.inFlightFence            = vk::raii::Fence(m_device, { .flags = vk::FenceCreateFlagBits::eSignaled })
+			.lastUsedFence            = nullptr
 		};
 	}) | std::ranges::to<std::vector>();
 
@@ -422,6 +422,7 @@ std::optional<vk::Semaphore> Device::Submit(vk::raii::CommandBuffer* cb, const s
 
 	m_device.resetFences({ cbData.isGpuFree });
 	m_mainQueue.submit(submitInfo, cbData.isGpuFree);
+	m_frameData[m_currentFrame].lastUsedFence = &cbData.isGpuFree;
 
 	if (signalOp)
 		return std::nullopt;
@@ -483,8 +484,11 @@ void Device::FlushDeferred()
 
 std::tuple<Image&, vk::Semaphore, vk::Semaphore> Device::AcquireNextFrame()
 {
-	while (m_device.waitForFences({ m_frameData[m_currentFrame].inFlightFence }, true, UINT64_MAX) != vk::Result::eSuccess) {}
-	m_device.resetFences({ m_frameData[m_currentFrame].inFlightFence });
+	if (m_frameData[m_currentFrame].lastUsedFence)
+	{
+		while (m_device.waitForFences({ *m_frameData[m_currentFrame].lastUsedFence }, true, UINT64_MAX) != vk::Result::eSuccess) {}
+		m_frameData[m_currentFrame].lastUsedFence = nullptr;
+	}
 
 	for (auto& action : m_frameData[m_currentFrame].deferredActions)
 		action();
@@ -512,6 +516,5 @@ void Device::Present(const std::vector<vk::Semaphore>& waitOps)
 	if (m_mainQueue.presentKHR(presentInfo) != vk::Result::eSuccess)
 		throw std::runtime_error("No eSuccess while presenting. Check Suboptimal / OutOfDate (recreation not implemented) ?");
 
-	m_mainQueue.submit({}, m_frameData[m_currentFrame].inFlightFence);
 	++m_currentFrame %= m_frameData.size();
 }

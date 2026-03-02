@@ -181,6 +181,7 @@
     <ClInclude Include="include\basis\image.h" />
     <ClInclude Include="include\basis\mesh.h" />
     <ClInclude Include="include\basis\shadermodule.h" />
+    <ClInclude Include="include\basis\spline.h" />
     <ClInclude Include="include\basis\string_hash.h" />
     <ClInclude Include="include\basis\window.h" />
     <ClInclude Include="include\ts\miniminiz.h" />
